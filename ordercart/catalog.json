@@ -1,0 +1,11 @@
+{
+	"items": [{
+			"name": "Apple",
+			"price": 0.60
+		},
+		{
+			"name": "Orange",
+			"price": 0.25
+		}
+	]
+}
