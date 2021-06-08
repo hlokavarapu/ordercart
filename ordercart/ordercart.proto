@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+option go_package = "ordercart/ordercart";
+
+package ordercart;
+
+// The greeting service definition.
+service OrderCart {
+  rpc GetOrderCost (OrderCostRequest) returns (OrderCostResponse) {}
+}
+
+message OrderCostRequest {
+    repeated Item cart = 1;
+}
+
+message Item {
+    string name = 1;
+}
+
+message OrderCostResponse {
+    string cost = 1;
+}
