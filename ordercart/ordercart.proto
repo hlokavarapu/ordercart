@@ -18,5 +18,6 @@ message Item {
 }
 
 message OrderCostResponse {
-    string cost = 1;
+    map<string, uint32> receipt = 1;
+    string cost = 2;
 }
