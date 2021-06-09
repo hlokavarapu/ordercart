@@ -99,3 +99,52 @@ var OrderCart_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "ordercart/ordercart.proto",
 }
+
+// CustomerNotificationClient is the client API for CustomerNotification service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type CustomerNotificationClient interface {
+}
+
+type customerNotificationClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewCustomerNotificationClient(cc grpc.ClientConnInterface) CustomerNotificationClient {
+	return &customerNotificationClient{cc}
+}
+
+// CustomerNotificationServer is the server API for CustomerNotification service.
+// All implementations must embed UnimplementedCustomerNotificationServer
+// for forward compatibility
+type CustomerNotificationServer interface {
+	mustEmbedUnimplementedCustomerNotificationServer()
+}
+
+// UnimplementedCustomerNotificationServer must be embedded to have forward compatible implementations.
+type UnimplementedCustomerNotificationServer struct {
+}
+
+func (UnimplementedCustomerNotificationServer) mustEmbedUnimplementedCustomerNotificationServer() {}
+
+// UnsafeCustomerNotificationServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to CustomerNotificationServer will
+// result in compilation errors.
+type UnsafeCustomerNotificationServer interface {
+	mustEmbedUnimplementedCustomerNotificationServer()
+}
+
+func RegisterCustomerNotificationServer(s grpc.ServiceRegistrar, srv CustomerNotificationServer) {
+	s.RegisterService(&CustomerNotification_ServiceDesc, srv)
+}
+
+// CustomerNotification_ServiceDesc is the grpc.ServiceDesc for CustomerNotification service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var CustomerNotification_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "ordercart.CustomerNotification",
+	HandlerType: (*CustomerNotificationServer)(nil),
+	Methods:     []grpc.MethodDesc{},
+	Streams:     []grpc.StreamDesc{},
+	Metadata:    "ordercart/ordercart.proto",
+}

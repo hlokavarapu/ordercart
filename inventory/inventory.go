@@ -34,12 +34,14 @@ type PriceOffer struct {
 	Price int32 `json:"price"`
 }
 
-func (i *Inventory) LoadCatalog() error {
+func NewInventory() (*Inventory, error) {
+	inv := Inventory{}
 	catalogData, err := ioutil.ReadFile(catalogFilePath)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return i.Load(catalogData)
+	inv.Load(catalogData)
+	return &inv, nil
 }
 
 func (i *Inventory) Load(catalogData []byte) error {

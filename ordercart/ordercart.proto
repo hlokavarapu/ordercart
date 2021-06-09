@@ -9,6 +9,8 @@ service OrderCart {
   rpc GetOrderCost (OrderCostRequest) returns (OrderCostResponse) {}
 }
 
+service CustomerNotification {}
+
 message OrderCostRequest {
     repeated Item cart = 1;
 }
