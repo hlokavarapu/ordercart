@@ -1,11 +1,11 @@
-# Service OrderCart
+# Service OrderCart, CustomerNotification
 
-## Install and run service
-*service runs on localhost and port 50051 by default
+## Install and run services
+*services run on localhost and port 50051 by default
 
 `
-go get https://github.com/hlokavarapu/ordercart
-cd $GOPATH/src/github.com/hlokavarapu/ordercart
+git clone https://github.com/hlokavarapu/ordercart.git
+cd ordercart
 go run main.go
 `
 
@@ -18,7 +18,8 @@ grpcurl -plaintext -d '{"cart": [{"name": "Apple"},{"name": "Apple"},{"name": "O
 
 ## Run tests
 `
-go test ./...
+go test -v ./...
 `
+
 
 
