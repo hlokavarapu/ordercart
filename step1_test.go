@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"ordercart/inventory"
 	"testing"
 
 	pb "ordercart/ordercart"
@@ -31,10 +30,15 @@ const testCatalogStep1 = `
 	]
 }`
 
+func newTestOrderCartServer(t *testing.T, catalogData []byte) *orderCartServer {
+	s, err := NewOrderCartServer()
+	assert.NoError(t, err)
+	assert.NoError(t, s.inv.Load(catalogData))
+	return s
+}
+
 func TestGetOrderCost_Step1(t *testing.T) {
-	inv := inventory.Inventory{}
-	assert.NoError(t, inv.Load([]byte(testCatalogStep1)))
-	s := server{inv: inv}
+	s := newTestOrderCartServer(t, []byte(testCatalogStep1))
 
 	request := createGetOrderCostRequest([]string{"Apple", "Apple", "Orange", "Apple"})
 	expResponse := pb.OrderCostResponse{
@@ -52,10 +56,8 @@ func TestGetOrderCost_Step1(t *testing.T) {
 }
 
 func TestInvalidItemsGetOrderCostStep1(t *testing.T) {
-	inv := inventory.Inventory{}
-	assert.NoError(t, inv.Load([]byte(testCatalogStep1)))
+	s := newTestOrderCartServer(t, []byte(testCatalogStep1))
 
-	s := server{inv: inv}
 	request := createGetOrderCostRequest([]string{"InvalidItemName"})
 	_, err := s.GetOrderCost(context.Background(), request)
 	assert.Error(t, err)

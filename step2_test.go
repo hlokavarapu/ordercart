@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"ordercart/inventory"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -30,9 +29,7 @@ const testCatalogStep2 = `
 }`
 
 func TestGetOrderCost_Step2(t *testing.T) {
-	inv := inventory.Inventory{}
-	assert.NoError(t, inv.Load([]byte(testCatalogStep2)))
-	s := server{inv: inv}
+	s := newTestOrderCartServer(t, []byte(testCatalogStep2))
 
 	cartTests := []struct {
 		cart       []string
