@@ -32,6 +32,14 @@ type (
 	}
 )
 
+func NewOrderEvent(id uuid.UUID, s Status, t time.Time) OrderEvent {
+	return OrderEvent{
+		OrderID:      id,
+		Status:       s,
+		Deliverytime: t,
+	}
+}
+
 func (e *OrderEvent) EventStatus() string {
 	orderStatusMap := map[Status]string{
 		Received:         "Received",
