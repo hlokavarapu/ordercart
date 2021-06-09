@@ -5,7 +5,8 @@
 			"deal": {
 				"buy": 1,
 				"get": 1
-			}
+			},
+			"stock": 100
 		},
 		{
 			"name": "Orange",
@@ -13,7 +14,8 @@
 			"priceDeal": {
 				"buy": 2,
 				"price": 1
-			}
+			},
+			"stock": 100
 		}
 	]
 }
