@@ -1,11 +1,19 @@
 {
 	"items": [{
 			"name": "Apple",
-			"price": 0.60
+			"price": 0.60,
+			"deal": {
+				"buy": 1,
+				"get": 1
+			}
 		},
 		{
 			"name": "Orange",
-			"price": 0.25
+			"price": 0.25,
+			"priceDeal": {
+				"buy": 2,
+				"price": 1
+			}
 		}
 	]
 }

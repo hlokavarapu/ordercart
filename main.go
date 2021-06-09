@@ -23,16 +23,21 @@ type server struct {
 }
 
 func (s *server) GetOrderCost(ctx context.Context, order *pb.OrderCostRequest) (*pb.OrderCostResponse, error) {
-	var totalCost float32
+	cart := make(map[string]uint32)
 
 	for _, item := range order.GetCart() {
-		if itemCost, err := s.inv.GetPrice(item.GetName()); err != nil {
-			return nil, err
+		if _, ok := cart[item.GetName()]; ok {
+			cart[item.GetName()] += 1
 		} else {
-			totalCost += itemCost
+			cart[item.GetName()] = 1
 		}
 	}
-	return &pb.OrderCostResponse{Cost: fmt.Sprintf("$%.2f", totalCost)}, nil
+
+	receipt, totalCost, err := s.inv.GetCost(cart)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.OrderCostResponse{Receipt: receipt, Cost: fmt.Sprintf("$%.2f", totalCost)}, nil
 }
 
 // Hello returns a greeting for the named person.
@@ -45,7 +50,7 @@ func main() {
 	s := grpc.NewServer()
 
 	inv := inventory.Inventory{}
-	if err := inv.Load(); err != nil {
+	if err := inv.LoadCatalog(); err != nil {
 		log.Fatalf("failed to get catalog, %v", err)
 	}
 
