@@ -10,15 +10,15 @@ go run main.go
 `
 
 ## Client calls:
-*For all client calls, I am using the tool grpcurl to hit the OrderCart service.
-### Step 1 - Client call:
+*To make client calls use the CLI tool grpcurl to hit the OrderCart service.
+For example:
 `
 grpcurl -plaintext -d '{"cart": [{"name": "Apple"},{"name": "Apple"},{"name": "Orange"},{"name": "Apple"}]}' localhost:50051 ordercart.OrderCart/GetOrderCost
 `
 
 ## Run tests
 `
-go test
+go test ./...
 `
 
 

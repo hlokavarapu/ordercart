@@ -17,43 +17,44 @@ func createGetOrderCostRequest(names []string) *pb.OrderCostRequest {
 	}
 	return &pb.OrderCostRequest{Cart: cart}
 }
-func TestGetOrderCostStep1(t *testing.T) {
 
+const testCatalogStep1 = `
+{
+	"items": [{
+			"name": "Apple",
+			"price": 0.60
+		},
+		{
+			"name": "Orange",
+			"price": 0.25
+		}
+	]
+}`
+
+func TestGetOrderCost_Step1(t *testing.T) {
 	inv := inventory.Inventory{}
-	assert.NoError(t, inv.Load())
+	assert.NoError(t, inv.Load([]byte(testCatalogStep1)))
 	s := server{inv: inv}
 
-	itemPriceTests := []struct {
-		name     string
-		expPrice float32
-	}{
-		{
-			name:     "Apple",
-			expPrice: .60,
-		},
-		{
-			name:     "Orange",
-			expPrice: .25,
-		},
-	}
-
-	for _, tt := range itemPriceTests {
-		price, err := s.inv.GetPrice(tt.name)
-		assert.NoError(t, err)
-		assert.Equal(t, tt.expPrice, price)
-	}
-
 	request := createGetOrderCostRequest([]string{"Apple", "Apple", "Orange", "Apple"})
-	expResponse := pb.OrderCostResponse{Cost: "$2.05"}
+	expResponse := pb.OrderCostResponse{
+		Receipt: map[string]uint32{
+			"Apple":  3,
+			"Orange": 1,
+		},
+		Cost: "$2.05",
+	}
 
 	response, err := s.GetOrderCost(context.Background(), request)
 	assert.NoError(t, err)
+	assert.EqualValues(t, expResponse.Receipt, response.Receipt)
 	assert.EqualValues(t, expResponse.Cost, response.Cost)
 }
 
 func TestInvalidItemsGetOrderCostStep1(t *testing.T) {
 	inv := inventory.Inventory{}
-	assert.NoError(t, inv.Load())
+	assert.NoError(t, inv.Load([]byte(testCatalogStep1)))
+
 	s := server{inv: inv}
 	request := createGetOrderCostRequest([]string{"InvalidItemName"})
 	_, err := s.GetOrderCost(context.Background(), request)
