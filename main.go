@@ -43,7 +43,7 @@ func NewOrderCartServer() (*orderCartServer, error) {
 func (s *orderCartServer) GetOrderCost(ctx context.Context, order *pb.OrderCostRequest) (*pb.OrderCostResponse, error) {
 	id := uuid.New()
 	estDeliverTime := time.Now().Add(time.Hour)
-	eventRecieved := notifier.NewOrderEvent(id, notifier.Received, estDeliverTime)
+	eventRecieved := notifier.NewOrderEvent(id, notifier.Received, estDeliverTime, "")
 	s.eNotifier.Notify(eventRecieved)
 
 	cart := make(map[string]uint32)
@@ -56,22 +56,21 @@ func (s *orderCartServer) GetOrderCost(ctx context.Context, order *pb.OrderCostR
 		}
 	}
 
-	receipt, totalCost, err := s.inv.GetCost(cart)
-	if err != nil {
-		s.eNotifier.Notify(notifier.NewOrderEvent(id, notifier.FailedIvalidCart, time.Now()))
+	if receipt, totalCost, status, err := s.inv.Process(cart); err != nil {
+		s.eNotifier.Notify(notifier.NewOrderEvent(id, status, time.Now(), err.Error()))
 		return nil, err
 	} else {
-		s.eNotifier.Notify(notifier.NewOrderEvent(id, notifier.Fulfilled, estDeliverTime))
+		s.eNotifier.Notify(notifier.NewOrderEvent(id, status, estDeliverTime, ""))
+		return &pb.OrderCostResponse{Receipt: receipt, Cost: fmt.Sprintf("$%.2f", totalCost)}, nil
 	}
-	return &pb.OrderCostResponse{Receipt: receipt, Cost: fmt.Sprintf("$%.2f", totalCost)}, nil
 }
 
 func (s *notifierServer) OnNotify(e notifier.OrderEvent) {
 	switch status := e.Status; status {
-	case notifier.FailedIvalidCart:
-		fmt.Printf("Order id=%s \nstatus=%v\n", e.OrderID, e.EventStatus())
+	case notifier.FailedInvalidCart, notifier.OutOfStock:
+		fmt.Printf("Order id=%s \nstatus=%v\nmessage=%s\n\n", e.OrderID, e.EventStatus(), e.Message)
 	case notifier.Received, notifier.Fulfilled:
-		fmt.Printf("Order id=%s \nstatus=%v\nest. delivery time=%v\n", e.OrderID, e.EventStatus(), e.EstDeliveryTime())
+		fmt.Printf("Order id=%s \nstatus=%v\nest. delivery time=%v\n\n", e.OrderID, e.EventStatus(), e.EstDeliveryTime())
 	default:
 	}
 }

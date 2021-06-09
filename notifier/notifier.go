@@ -8,8 +8,9 @@ import (
 
 const (
 	Received Status = iota
-	FailedIvalidCart
+	FailedInvalidCart
 	Fulfilled
+	OutOfStock
 )
 
 type (
@@ -19,6 +20,7 @@ type (
 		OrderID      uuid.UUID
 		Status       Status
 		Deliverytime time.Time
+		Message      string
 	}
 
 	Observer interface {
@@ -32,19 +34,21 @@ type (
 	}
 )
 
-func NewOrderEvent(id uuid.UUID, s Status, t time.Time) OrderEvent {
+func NewOrderEvent(id uuid.UUID, s Status, t time.Time, msg string) OrderEvent {
 	return OrderEvent{
 		OrderID:      id,
 		Status:       s,
 		Deliverytime: t,
+		Message:      msg,
 	}
 }
 
 func (e *OrderEvent) EventStatus() string {
 	orderStatusMap := map[Status]string{
-		Received:         "Received",
-		FailedIvalidCart: "Failed Invalid Cart",
-		Fulfilled:        "Fulfilled",
+		Received:          "Received",
+		FailedInvalidCart: "FailedInvalidCart",
+		Fulfilled:         "Fulfilled",
+		OutOfStock:        "OutofStock",
 	}
 	return orderStatusMap[e.Status]
 }
